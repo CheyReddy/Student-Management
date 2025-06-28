@@ -26,7 +26,7 @@
 			<form:input path="country" id="country"/>
 
 			<label for="dob">Date of Birth</label>
-			<form:input path="dob" id="dob" placeholder="yyyy-mm-dd"/>
+			<form:input path="dob" id="dob" type="date" placeholder="yyyy-mm-dd"/>
 			
 			<label for="gender">Gender:</label>
             <form:input path="gender" id="gender" />
