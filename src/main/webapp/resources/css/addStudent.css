@@ -30,7 +30,7 @@ label {
 	color: #333;
 }
 
-form input[type="text"], form input[type="tel"], form input[type="password"], form input[type="submit"]
+form input[type="text"], form input[type="tel"], form input[type="password"], form input[type="date"], form input[type="submit"]
 	{
 	width: 100%;
 	padding: 10px;
