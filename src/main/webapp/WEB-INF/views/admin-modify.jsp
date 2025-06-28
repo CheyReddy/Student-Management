@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Update Student</title>
+<title>Update Admin</title>
 <link rel="stylesheet" type="text/css"
 	href="/resources/css/updateStudent.css">
 
