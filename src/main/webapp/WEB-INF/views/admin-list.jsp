@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>User HomePage</title>
+<title>Admin HomePage</title>
 <link rel="stylesheet" type="text/css" href="/resources/css/studentsList.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
