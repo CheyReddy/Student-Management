@@ -1,0 +1,146 @@
+@charset "UTF-8";
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url("/resources/images/update-student-bg-img.jpg");
+    background-size: cover;
+}
+
+/* Page heading */
+h1 {
+    text-align: center;
+    padding: 20px;
+    background-color: #007bff;
+    color: white;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Main container box */
+.container {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 30px 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.container:hover {
+    box-shadow: 0 16px 32px rgba(0,0,0,0.15);
+}
+
+.searchStudent {
+    display: flex;
+    gap: 10px; 
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.searchStudent label {
+    margin: 0; 
+    white-space: nowrap;
+}
+
+.searchStudent input[type="text"] {
+    flex: 1; 
+    margin-bottom: 0; 
+    text-align: center;
+}
+
+.searchStudent button {
+	width:auto;
+    flex-shrink: 0;
+    padding: 10px 16px;
+    margin-bottom: 0;
+}
+
+/* Labels above inputs */
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+/* Input fields */
+form input[type="text"],
+form input[type="tel"],
+form input[type="email"],
+form input[type="date"],
+form input[type="submit"],
+form input[type="hidden"],
+form button,
+form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focus effect on inputs */
+form input[type="text"]:focus,
+form input[type="tel"]:focus,
+form input[type="email"]:focus,
+form input[type="date"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.2);
+    outline: none;
+}
+
+/* Submit and action buttons */
+form button,
+form input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s, box-shadow 0.3s ease;
+}
+
+/* Hover effect for buttons */
+form button:hover,
+form input[type="submit"]:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Delete button different color */
+form button[value="delete"] {
+    background-color: #dc3545;
+}
+
+form button[value="delete"]:hover {
+    background-color: #c82333;
+}
+
+/* Optional: spacing between buttons */
+form button + button {
+    margin-top: 10px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 600px) {
+    .container {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .searchStudent button {
+        width: auto;
+    }
+}

@@ -1,0 +1,62 @@
+body {
+	font-family: 'Roboto', sans-serif;
+	margin: 0;
+	padding: 0;
+	background-image: url("/resources/images/add-student-bg-img.jpg");
+	background-size: cover;
+}
+
+h1 {
+	text-align: center;
+	padding: 20px;
+	background-color: #17a2b8;
+	color: white;
+	margin: 0;
+}
+
+.container {
+	max-width: 400px;
+	margin: 40px auto;
+	padding: 30px;
+	background-color: white;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	border-radius: 10px;
+}
+
+label {
+	display: block;
+	margin-bottom: 6px;
+	font-weight: 500;
+	color: #333;
+}
+
+form input[type="text"], form input[type="tel"], form input[type="password"], form input[type="submit"]
+	{
+	width: 100%;
+	padding: 10px;
+	margin-bottom: 20px;
+	box-sizing: border-box;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 16px;
+	text-align: center;
+}
+
+form input[type="submit"] {
+	background-color: #28a745;
+	color: white;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+form input[type="submit"]:hover {
+	background-color: #218838;
+}
+
+@media screen and (max-width: 600px) {
+	.container {
+		margin: 20px;
+		padding: 20px;
+	}
+}

@@ -1,0 +1,94 @@
+@charset "UTF-8";
+
+@charset "UTF-8";
+
+body {
+	font-family: 'Poppins', sans-serif;
+	background: linear-gradient(to right, #c2e9fb, #a1c4fd);
+	margin: 0;
+	padding: 20px 0;
+}
+
+.form-container {
+	background-color: #ffffff;
+	margin: 5px auto;
+	padding: 5px 40px;
+	border-radius: 20px;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+	width: 480px;
+}
+
+h1 {
+	text-align: center;
+	color: #6a11cb;
+	margin-bottom: 10px;
+	font-weight: 600;
+	letter-spacing: 1px;
+}
+
+label {
+	display: block;
+	margin-bottom: 6px;
+	font-weight: 500;
+	color: #333;
+}
+
+input[type="text"], input[type="password"], select {
+	width: 100%;
+	padding: 10px 14px;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	background-color: #f9f9f9;
+	font-size: 14px;
+}
+
+.inline-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.inline-group label {
+	margin-right: 10px;
+	font-weight: normal;
+}
+
+.inline-group input[type="text"] {
+	flex: 1;
+	min-width: 0;
+}
+
+input[type="submit"] {
+	background-color: #6a11cb;
+	color: white;
+	border: none;
+	padding: 12px 20px;
+	font-size: 16px;
+	border-radius: 10px;
+	cursor: pointer;
+	width: 100%;
+	transition: background 0.3s ease;
+	font-weight: 500;
+	letter-spacing: 0.5px;
+	margin-top: 5px;
+	margin-bottom: 15px;
+}
+
+input[type="submit"]:hover {
+	background-color: #5a0eb3;
+}
+
+.error {
+	color: red;
+	font-size: 13px;
+	margin-bottom: 10px;
+	display: block;
+}
+
+h3 {
+	margin-top: 5px;
+	color: #6a11cb;
+	font-size: 18px;
+	margin-bottom: 5px;
+}
