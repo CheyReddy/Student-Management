@@ -1,13 +1,20 @@
 package com.sm.controllers;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -19,13 +26,14 @@ import com.sm.dto.Admin;
 import com.sm.dto.Student;
 import com.sm.service.StudentService;
 
+import jakarta.validation.Valid;
+
 @Controller
 public class StudentController {
 
 
 	@Autowired
 	private StudentService studentServiceImpl;
-
 	
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -33,8 +41,6 @@ public class StudentController {
 	    dateFormat.setLenient(false);
 	    binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
-
-	
 	
 	@GetMapping("/")
 	public String homePage() {
@@ -56,12 +62,17 @@ public class StudentController {
 	}
 
 	@PostMapping("/processStudent")
-	public String processStudent(@ModelAttribute("student") Student student) {
-		int insertedData = studentServiceImpl.addStudent(student);
-		if (insertedData == 1) {
-			return "redirect:/showStudent";
-		} else {
-			return "redirect:/add-student";
+	public String processStudent(@Valid @ModelAttribute("student") Student student, BindingResult result) {
+		if (result.hasErrors()) {
+            return "add-student";
+        }
+		else {
+			int insertedData = studentServiceImpl.addStudent(student);
+			if (insertedData == 1) {
+				return "redirect:/showStudent";
+			} else {
+				return "redirect:/add-student";
+			}			
 		}
 	}
 
@@ -101,17 +112,22 @@ public class StudentController {
 	}
 
 	@PostMapping("/processLogin")
-	public String processLogin(@ModelAttribute("admin") Admin admin) {
+	public String processLogin(@Valid @ModelAttribute("admin") Admin admin, BindingResult result) {
 
-		Admin isValidLogin = studentServiceImpl.getEmailAndPassword(admin);
-
-		if(isValidLogin!=null) {
-			return "adminHome";
-		}
+		if (result.hasErrors()) {
+            return "login"; 
+        }
 		else {
-			System.out.println(isValidLogin);
-			return "redirect:/login";
+			Admin isValidLogin = studentServiceImpl.getEmailAndPassword(admin);
+
+			if(isValidLogin!=null) {
+				return "adminHome";
+			}
+			else {
+				return "redirect:/login";
+			}
 		}
+		
 	}
 
 	@GetMapping("/modifyStudent")
@@ -121,24 +137,34 @@ public class StudentController {
 
 	@GetMapping("/getStudent")
 	public String fetchStudentById(@RequestParam("id") int id, Model model) {
-		Student student = studentServiceImpl.fetchStudentById(id);
-		model.addAttribute("student", student);
-		return "student-modify";
+		try {
+			Student student = studentServiceImpl.fetchStudentById(id);
+			model.addAttribute("student", student);
+	    } catch (EmptyResultDataAccessException e) {
+	        model.addAttribute("error", "Invalid ID..!");
+	        model.addAttribute("student", new Student()); 
+	    }
+	    return "student-modify";
 	}
 	
 	@PostMapping("/processStudentAction")
-	public String processStudentAction(@ModelAttribute("student") Student student,
-	                                 @RequestParam("action") String action, Model model) {
+	public String processStudentAction(@Valid @ModelAttribute("student") Student student, BindingResult result, Model model,
+            @RequestParam("action") String action) {
 
 		try {
-			if ("update".equals(action)) {
-		    	studentServiceImpl.updateStudent(student);
-		        return "redirect:/showStudent";
-		    }
-		    else if ("delete".equals(action)) {
-		    	studentServiceImpl.deleteStudent(student.getId());
-		        return "redirect:/showStudent";
-		    }
+			if (result.hasErrors()) {
+	            return "student-modify"; 
+	        }
+			else {
+				if ("update".equals(action)) {
+					studentServiceImpl.updateStudent(student);
+					return "redirect:/showStudent";
+				}
+				else if ("delete".equals(action)) {
+					studentServiceImpl.deleteStudent(student.getId());
+					return "redirect:/showStudent";
+				}				
+			}
 		    return "redirect:/updateAdmin?error";
 		}
 		catch (Exception e) {
@@ -147,7 +173,18 @@ public class StudentController {
 		}
 		
 	}
-
+	
+	@ModelAttribute("countryList")
+    public List<String> getCountries() {
+        String[] countryCodes = Locale.getISOCountries();
+        List<String> countries = new ArrayList<>();
+        for (String code : countryCodes) {
+            Locale locale = new Locale("", code);
+            countries.add(locale.getDisplayCountry());
+        }
+        Collections.sort(countries);
+        return countries;
+    }
 
 //	@GetMapping("/profile")
 //	public String goToProfilePage() {
@@ -167,12 +204,17 @@ public class StudentController {
 	}
 
 	@PostMapping("/processAdmin")
-	public String processAdmin(@ModelAttribute("admin") Admin admin) {
-		int insertedData = studentServiceImpl.addAdmin(admin);
-		if (insertedData == 1) {
-			return "redirect:/showAdmins";
-		} else {
-			return "redirect:/addAdmin";
+	public String processAdmin(@Valid @ModelAttribute("admin") Admin admin, BindingResult result) {
+		if(result.hasErrors()) {
+			return "add-admin";
+		}
+		else {
+			int insertedData = studentServiceImpl.addAdmin(admin);
+			if (insertedData == 1) {
+				return "redirect:/showAdmins";
+			} else {
+				return "redirect:/addAdmin";
+			}			
 		}
 	}
 
@@ -183,42 +225,84 @@ public class StudentController {
 
 	@GetMapping("/getAdmin")
 	public String fetchAdminById(@RequestParam("adminId") int adminId, Model model) {
-		Admin admin = studentServiceImpl.fetchAdminById(adminId);
-		model.addAttribute("admin", admin);
-		return "admin-modify";
-	}
-
-	@PostMapping("/processAdminUpdate")
-	public String processAdminUpdate(@ModelAttribute("admin") Admin admin) {
-		int insertedData = studentServiceImpl.addAdmin(admin);
-		if (insertedData == 1) {
-			return "redirect:/add-admin";
-		} else {
-			return "redirect:/add-admin";
-		}
+		try {
+	        Admin admin = studentServiceImpl.fetchAdminById(adminId);
+	        model.addAttribute("admin", admin);
+	    } catch (EmptyResultDataAccessException e) {
+	        model.addAttribute("error", "Invalid ID..!");
+	        model.addAttribute("admin", new Admin()); 
+	    }
+	    return "admin-modify";
 	}
 
 	@GetMapping("/showAdmins")
 	public String getAdminsList(Model model) {
+//		List<Admin> fetchAdmins = studentServiceImpl.fetchAdmins();
+//		model.addAttribute("admins", fetchAdmins);
+		
 		List<Admin> fetchAdmins = studentServiceImpl.fetchAdmins();
-		model.addAttribute("admins", fetchAdmins);
+	    for (Admin admin : fetchAdmins) {
+	        if (admin.getAdminPassword() != null && !admin.getAdminPassword().isEmpty()) {
+	            admin.setAdminPassword("******");
+	        }
+	    }
+
+	    model.addAttribute("admins", fetchAdmins);
 
 		return "admin-list";
 	}
 
 	@PostMapping("/processAdminAction")
-	public String processAdminAction(@ModelAttribute("admin") Admin admin,
-	                                 @RequestParam("action") String action) {
+	public String processAdminAction(@Valid @ModelAttribute("admin") Admin admin, BindingResult result,
+	                                 @RequestParam("action") String action, Model model) {
+//		if(result.hasErrors()) {
+//			return "admin-modify";
+//		}
+//		else {
+//			if ("update".equals(action)) {
+//				studentServiceImpl.updateAdmin(admin);
+//				return "redirect:/showAdmins";
+//			}
+//			else if ("delete".equals(action)) {
+//				studentServiceImpl.deleteAdmin(admin.getAdminId());
+//				return "redirect:/showAdmins";
+//			}
+//			return "redirect:/updateAdmin?error";			
+//		}
+		
+		if ("delete".equals(action)) {
+	        // Skip validation for delete
+	        studentServiceImpl.deleteAdmin(admin.getAdminId());
+	        return "redirect:/showAdmins";
+	    }
+		
+		if (admin.getAdminName() == null || admin.getAdminName().trim().isEmpty()) {
+	        result.rejectValue("adminName", "NotBlank", "Name is required");
+	    }
+	    if (admin.getAdminEmail() == null || admin.getAdminEmail().trim().isEmpty()) {
+	        result.rejectValue("adminEmail", "NotBlank", "Email is required");
+	    }
 
-		if ("update".equals(action)) {
-	    	studentServiceImpl.updateAdmin(admin);
-	        return "redirect:/showAdmins";
+	    // Password handling
+	    if (admin.getNewPassword() != null && !admin.getNewPassword().isEmpty()) {
+	        if (admin.getNewPassword().length() < 6) {
+	            result.rejectValue("newPassword", "Size", "Password must be at least 6 characters long");
+	        } else {
+	            PasswordEncoder encoder = new BCryptPasswordEncoder();
+	            admin.setAdminPassword(encoder.encode(admin.getNewPassword()));
+	        }
+	    } else {
+	        // Keep old password if new password not entered
+	        Admin existing = studentServiceImpl.fetchAdminById(admin.getAdminId());
+	        admin.setAdminPassword(existing.getAdminPassword());
 	    }
-	    else if ("delete".equals(action)) {
-	    	studentServiceImpl.deleteAdmin(admin.getAdminId());
-	        return "redirect:/showAdmins";
+
+	    if (result.hasErrors()) {
+	        return "admin-modify";
 	    }
-	    return "redirect:/updateAdmin?error";
+
+	    studentServiceImpl.updateAdmin(admin);
+	    return "redirect:/showAdmins";
 	}
 
 	@GetMapping("/adminHome")

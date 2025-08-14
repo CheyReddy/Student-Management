@@ -19,7 +19,7 @@ public class StudentResultSetExtractor implements ResultSetExtractor<List<Studen
 			Student newStudent = new Student();
 			newStudent.setId(res.getInt("id"));
 			newStudent.setName(res.getString("name"));
-			newStudent.setMobile(res.getLong("mobile"));
+			newStudent.setMobile(res.getString("mobile"));
 			newStudent.setCountry(res.getString("country"));
 			studentsList.add(newStudent);
 		}

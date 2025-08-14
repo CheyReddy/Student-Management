@@ -83,6 +83,13 @@ body {
     transform: translateY(-2px);
 }
 
+.error {
+    color: red;           
+    font-size: 14px;     
+    font-weight: bold;    
+    margin-top: 4px;      
+    display: block;       
+}
 
 @media (max-width: 700px) {
     .button-group {

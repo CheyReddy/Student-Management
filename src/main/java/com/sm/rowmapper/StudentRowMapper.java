@@ -14,12 +14,12 @@ public class StudentRowMapper implements RowMapper<Student> {
 		Student newStudent = new Student();
 		newStudent.setId(res.getInt("id"));
 		newStudent.setName(res.getString("name"));
-		newStudent.setMobile(res.getLong("mobile"));
+		newStudent.setMobile(res.getString("mobile"));
 		newStudent.setCountry(res.getString("country"));
 		newStudent.setDob(res.getDate("dob"));
 		newStudent.setEmail(res.getString("email"));
 		newStudent.setGender(res.getString("gender"));
-		newStudent.setParentsMobile(res.getLong("parentsmobile"));
+		newStudent.setParentsMobile(res.getString("parentsmobile"));
 		return newStudent;
 	}
 

@@ -25,7 +25,7 @@
             </div>
 
             <div class="footer-links">
-                <span><a href="#" class="disabled-link">Register</a></span> 
+                <span><a href="#" class="disabled-link" style="display:none;">Register</a></span> 
                 <span><input type="submit" value="Login"/></span>
             </div>
         </form:form>

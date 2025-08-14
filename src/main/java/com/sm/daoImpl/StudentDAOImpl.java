@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import com.sm.dao.StudentDAO;
@@ -33,7 +35,8 @@ public class StudentDAOImpl implements StudentDAO {
 	@Override
 	public int addStudent(Student student) {
 		String insertStudent = "insert into students (name,mobile,country,dob,gender,email,parentsmobile)values(?,?,?,?,?,?,?)";
-		Object[] arg = { student.getName(), student.getMobile(), student.getCountry(), student.getDob(), student.getGender(), student.getEmail(), student.getParentsMobile()};
+		Object[] arg = { student.getName(), student.getMobile(), student.getCountry(), student.getDob(),
+				student.getGender(), student.getEmail(), student.getParentsMobile() };
 		return jdbcTemplate.update(insertStudent, arg);
 	}
 
@@ -46,7 +49,8 @@ public class StudentDAOImpl implements StudentDAO {
 	@Override
 	public int updateStudent(Student student) {
 		String updateStudent = "update students set name=?, mobile=?, country=? , dob=?, email=?, gender=?, parentsmobile=? where id=?";
-		Object[] arg = { student.getName(), student.getMobile(), student.getCountry(), student.getDob(), student.getEmail(), student.getGender(), student.getParentsMobile(), student.getId() };
+		Object[] arg = { student.getName(), student.getMobile(), student.getCountry(), student.getDob(),
+				student.getEmail(), student.getGender(), student.getParentsMobile(), student.getId() };
 		return jdbcTemplate.update(updateStudent, arg);
 	}
 
@@ -57,35 +61,60 @@ public class StudentDAOImpl implements StudentDAO {
 		return student;
 	}
 
+	// Admin Section
+
 	@Override
 	public Admin getEmailAndPassword(Admin userLogin) {
-		String getLoginCred = "select adminname,adminemail, adminpassword from admins where adminemail = ? and adminpassword = ?";
+//		String getLoginCred = "select adminname,adminemail, adminpassword from admins where adminemail = ? and adminpassword = ?";
+//
+//		Admin dbAdmin;
+//		try {
+//			dbAdmin = jdbcTemplate.queryForObject(getLoginCred,
+//					new Object[] { userLogin.getAdminEmail(), userLogin.getAdminPassword() }, (rs, nowNum) -> {
+//						Admin admin = new Admin();
+//						admin.setAdminEmail(rs.getString("adminemail"));
+//						admin.setAdminPassword(rs.getString("adminpassword"));
+//						admin.setAdminName(rs.getString("adminname"));
+//						return admin;
+//					});
+//		} catch (EmptyResultDataAccessException e) {
+//			return null;
+//		}
+//
+//		return dbAdmin;
 
-		Admin dbAdmin;
+		String getLoginCred = "SELECT adminname, adminemail, adminpassword FROM admins WHERE adminemail = ?";
+
 		try {
-			dbAdmin = jdbcTemplate.queryForObject(getLoginCred,
-					new Object[] {userLogin.getAdminEmail(), userLogin.getAdminPassword()}, (rs, nowNum) -> {
+			Admin dbAdmin = jdbcTemplate.queryForObject(getLoginCred, new Object[] { userLogin.getAdminEmail() },
+					(rs, rowNum) -> {
 						Admin admin = new Admin();
 						admin.setAdminEmail(rs.getString("adminemail"));
 						admin.setAdminPassword(rs.getString("adminpassword"));
 						admin.setAdminName(rs.getString("adminname"));
 						return admin;
 					});
+
+			// Check password match
+			PasswordEncoder encoder = new BCryptPasswordEncoder();
+			if (encoder.matches(userLogin.getAdminPassword(), dbAdmin.getAdminPassword())) {
+				return dbAdmin;
+			} else {
+				return null;
+			}
+
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
-
-		return dbAdmin;
 	}
-
-
-	// Admin Section
 
 	@Override
 	public int addAdmin(Admin admin) {
-		String insertStudent = "insert into admins (adminname,adminemail,adminpassword)values(?,?,?)";
-		Object[] arg = { admin.getAdminName(),admin.getAdminEmail(),admin.getAdminPassword() };
-		return jdbcTemplate.update(insertStudent, arg);
+		PasswordEncoder encoder = new BCryptPasswordEncoder();
+		String encodedPassword = encoder.encode(admin.getAdminPassword());
+		String insertAdmin = "insert into admins (adminname, adminemail, adminpassword) values (?, ?, ?)";
+		Object[] args = { admin.getAdminName(), admin.getAdminEmail(), encodedPassword };
+		return jdbcTemplate.update(insertAdmin, args);
 	}
 
 	@Override
@@ -97,14 +126,32 @@ public class StudentDAOImpl implements StudentDAO {
 	@Override
 	public List<Admin> fetchAdmins() {
 		String fetchAllAdmins = "select * from admins";
-		return jdbcTemplate.query(fetchAllAdmins,new AdminResultSetExtractor());
+		return jdbcTemplate.query(fetchAllAdmins, new AdminResultSetExtractor());
 	}
 
 	@Override
 	public int updateAdmin(Admin admin) {
-		String updateAdmin = "update admins set adminname=?, adminemail=?, adminpassword=? where adminid=?";
-		Object[] arg = { admin.getAdminName(), admin.getAdminEmail(), admin.getAdminPassword(), admin.getAdminId() };
-		return jdbcTemplate.update(updateAdmin, arg);
+//		String updateAdmin = "update admins set adminname=?, adminemail=?, adminpassword=? where adminid=?";
+//		Object[] arg = { admin.getAdminName(), admin.getAdminEmail(), admin.getAdminPassword(), admin.getAdminId() };
+//		return jdbcTemplate.update(updateAdmin, arg);
+
+		PasswordEncoder encoder = new BCryptPasswordEncoder();
+
+		// Encrypt only if password is not empty
+		String encodedPassword = admin.getAdminPassword();
+		if (encodedPassword != null && !encodedPassword.trim().isEmpty()) {
+			encodedPassword = encoder.encode(admin.getAdminPassword());
+		} else {
+			String oldPassword = jdbcTemplate.queryForObject("SELECT adminpassword FROM admins WHERE adminid=?",
+					String.class, admin.getAdminId());
+			encodedPassword = oldPassword;
+		}
+
+		String updateAdmin = "UPDATE admins SET adminname=?, adminemail=?, adminpassword=? WHERE adminid=?";
+		Object[] args = { admin.getAdminName(), admin.getAdminEmail(), encodedPassword, admin.getAdminId() };
+
+		return jdbcTemplate.update(updateAdmin, args);
+
 	}
 
 	@Override

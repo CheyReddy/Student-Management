@@ -117,3 +117,11 @@ input[type="submit"]:hover {
   text-decoration: none;        
   cursor: default;              
 }
+
+.error {
+    color: red;           
+    font-size: 14px;     
+    font-weight: bold;    
+    margin-top: 4px;      
+    display: block;       
+}

@@ -1,24 +1,35 @@
 package com.sm.dto;
 
-import java.util.Date;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Component
 public class Student {
 
 	private int id;
 	private String name;
-	private long mobile;
+	
+	@Pattern(regexp = "^[6-9]\\d{9}$", message = "Mobile number must be 10 digits and start with 6-9")
+	private String mobile;
+	
 	private String country;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private java.util.Date dob;
 
 	private String gender;
+	
+	@Email(message = "Please provide a valid email address")
+	@NotBlank(message = "Email is required")
 	private String email;
-	private long parentsMobile;
+	
+	@Pattern(regexp = "^[6-9]\\d{9}$", message = "Mobile number must be 10 digits and start with 6-9")
+	private String parentsMobile;
+	
 	public int getId() {
 		return id;
 	}
@@ -31,10 +42,10 @@ public class Student {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public long getMobile() {
+	public String getMobile() {
 		return mobile;
 	}
-	public void setMobile(long mobile) {
+	public void setMobile(String mobile) {
 		this.mobile = mobile;
 	}
 	public String getCountry() {
@@ -61,10 +72,10 @@ public class Student {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public long getParentsMobile() {
+	public String getParentsMobile() {
 		return parentsMobile;
 	}
-	public void setParentsMobile(long parentsMobile) {
+	public void setParentsMobile(String parentsMobile) {
 		this.parentsMobile = parentsMobile;
 	}
 	@Override

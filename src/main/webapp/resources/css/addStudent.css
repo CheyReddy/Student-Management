@@ -30,16 +30,20 @@ label {
 	color: #333;
 }
 
+<<<<<<< HEAD
 form input[type="text"], form input[type="tel"], form input[type="password"], form input[type="date"], form input[type="submit"]
+=======
+form input[type="text"], form input[type="tel"], form input[type="password"], form input[type="date"], form input[type="submit"], form input[type="email"], form select
+>>>>>>> 9bbeb68 (Updated Student Management System with admin password encryption and UI fixes)
 	{
 	width: 100%;
 	padding: 10px;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	box-sizing: border-box;
 	border: 1px solid #ccc;
 	border-radius: 5px;
 	font-size: 16px;
-	text-align: center;
+	text-align: left;
 }
 
 form input[type="submit"] {
@@ -53,6 +57,14 @@ form input[type="submit"] {
 form input[type="submit"]:hover {
 	background-color: #218838;
 }
+
+.error {
+    color: red;           
+    font-size: 14px;       
+    display: block; 
+    margin-bottom: 10px;      
+}
+
 
 @media screen and (max-width: 600px) {
 	.container {
