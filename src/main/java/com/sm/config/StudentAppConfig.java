@@ -36,8 +36,8 @@ public class StudentAppConfig implements WebMvcConfigurer{
     public DataSource dataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
         ds.setUrl("jdbc:mysql://localhost:3306/student-management");
-        ds.setUsername("root");
-        ds.setPassword("root");
+        ds.setUsername("username");
+        ds.setPassword("password");
         ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
         return ds;
     }
